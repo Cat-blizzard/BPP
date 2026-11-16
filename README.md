@@ -1,5 +1,7 @@
 # What Enables In-Context Behavior Prompting for Manipulation?
 
+TIG adaptation in this fork: [中文说明、配置与验证](README_TIG_CN.md).
+
 <img src="docs/media/architecture.jpg" width="800">
 
 Accompanying code for the research paper [What Enables In-Context Behavior Prompting for Manipulation?](https://behavior-prompting.github.io/)

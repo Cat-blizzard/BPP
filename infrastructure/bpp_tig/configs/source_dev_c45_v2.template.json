@@ -1,0 +1,122 @@
+{
+  "schema_version": "bpp-tig-source-dev-v2",
+  "protocol_id": "source_dev_c45_v2",
+  "scope": "source_dev",
+  "source_split": "C45",
+  "human_config": "examples/baselines/lerobot_dataset/config/exp_configs/human_train_config_45.json",
+  "sim_config": "examples/baselines/lerobot_dataset/config/exp_configs/sim_train_config_45.json",
+  "tasks": [
+    {
+      "env_id": "TwoRobotPlaceBookBookcase-v1",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "human_repo": "human_H2",
+      "human_repo_by_level": {
+        "0": "human_H2",
+        "1": "human_H2",
+        "2": "human_H2",
+        "3": "human_H2"
+      }
+    },
+    {
+      "env_id": "TwoRobotPickAppleBananaToBaskets-v1",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "human_repo": "human_H8",
+      "human_repo_by_level": {
+        "0": "human_H8",
+        "1": "human_H8",
+        "2": "human_H8",
+        "3": "human_H8"
+      }
+    },
+    {
+      "env_id": "TwoRobotPutBox-v1",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "human_repo": "human_H46",
+      "human_repo_by_level": {
+        "0": "human_H46",
+        "1": "human_H46",
+        "2": "human_H46",
+        "3": "human_H46"
+      }
+    },
+    {
+      "env_id": "TwoRobotLiftLidFromSkillet-v1",
+      "levels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "human_repo": "human_H48",
+      "human_repo_by_level": {
+        "0": "human_H48",
+        "1": "human_H48",
+        "2": "human_H48",
+        "3": "human_H48"
+      }
+    }
+  ],
+  "env_ids": [
+    "L0_TwoRobotPlaceBookBookcase-v1",
+    "L1_TwoRobotPlaceBookBookcase-v1",
+    "L2_TwoRobotPlaceBookBookcase-v1",
+    "L3_TwoRobotPlaceBookBookcase-v1",
+    "L0_TwoRobotPickAppleBananaToBaskets-v1",
+    "L1_TwoRobotPickAppleBananaToBaskets-v1",
+    "L2_TwoRobotPickAppleBananaToBaskets-v1",
+    "L3_TwoRobotPickAppleBananaToBaskets-v1",
+    "L0_TwoRobotPutBox-v1",
+    "L1_TwoRobotPutBox-v1",
+    "L2_TwoRobotPutBox-v1",
+    "L3_TwoRobotPutBox-v1",
+    "L0_TwoRobotLiftLidFromSkillet-v1",
+    "L1_TwoRobotLiftLidFromSkillet-v1",
+    "L2_TwoRobotLiftLidFromSkillet-v1",
+    "L3_TwoRobotLiftLidFromSkillet-v1"
+  ],
+  "scene_seeds": [
+    10000,
+    10001,
+    10002
+  ],
+  "num_episodes": 3,
+  "total_rollouts": 48,
+  "human_reference": {
+    "episode_index": 0,
+    "draw_seed": 0,
+    "prompt_frames": 10
+  },
+  "weights": "ema_model",
+  "obs_horizon": 2,
+  "pred_horizon": 16,
+  "execute_horizon": 4,
+  "max_episode_steps": 500,
+  "primary_metric": "success_at_end",
+  "sub_sr": "last_reward",
+  "checkpoint_candidates": [],
+  "selection": {
+    "fixed_budget_primary_update": null,
+    "development_selected": "Maximum macro mean success_at_end over all 16 source task-level cases; exact ties choose earliest candidate update",
+    "separate_reporting": true,
+    "formal_seen_or_zero_shot_used_for_selection": false,
+    "automatic_early_stopping": false,
+    "scheduler_updates_unchanged": null
+  },
+  "source_identity": {},
+  "template": true
+}

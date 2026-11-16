@@ -1,0 +1,59 @@
+schema_version: 2
+name: bpp-video-tig-split-clip
+recipe: bpp-tig-split-clip-frozen-prompt-v2
+
+data:
+  image_size: 224
+  prompt_frames: 10
+  obs_horizon: 2
+  action_horizon: 16
+  execute_horizon: 4
+  state_dim: 18
+  action_dim: 16
+
+vision:
+  model_name: vit_base_patch16_clip_224.openai
+  pretrained: true
+  separate_prompt_and_receding_obs_encoders: true
+  prompt_frozen: true
+  receding_frozen: false
+  pretrained_lr_scale: 0.1
+  feature_aggregation: cls
+  train_crop_ratio: 0.95
+  eval_crop_ratio: 0.95
+  color_jitter:
+    brightness: 0.3
+    contrast: 0.4
+    saturation: 0.5
+    hue: 0.08
+
+prompt:
+  n_emb: 768
+  attention_pool_heads: 8
+  attention_pool_mlp_ratio: 4.0
+  cross_attention_layers: 6
+  cross_attention_heads: 8
+  attention_dropout: 0.1
+  attention_sink: true
+  attention_sink_tokens: 4
+  use_pool_modality_pos_embed: false
+
+diffusion:
+  train_timesteps: 50
+  inference_steps: 16
+  beta_start: 0.0001
+  beta_end: 0.02
+  beta_schedule: squaredcos_cap_v2
+  prediction_type: epsilon
+  clip_sample: true
+  diffusion_step_embed_dim: 128
+  down_dims: [256, 512, 1024]
+  kernel_size: 5
+  n_groups: 8
+  cond_predict_scale: true
+  input_perturbation: 0.1
+
+optimizer:
+  lr: 0.00005
+  weight_decay: 0.000001
+  betas: [0.95, 0.999]

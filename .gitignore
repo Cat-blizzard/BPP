@@ -14,3 +14,18 @@ runs
 datasets
 profile_output*
 .nfs*
+
+# Local TIG runtimes, environments, datasets and experiment outputs.
+.venv/
+.env
+.env.*
+!.env.example
+external/
+infrastructure/runtime/
+ccfa-workfiles/
+build/
+artifacts/
+*.pt
+*.pth
+*.ckpt
+*.safetensors

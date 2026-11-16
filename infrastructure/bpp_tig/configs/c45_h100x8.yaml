@@ -1,0 +1,46 @@
+# Eight-GPU profile. Hardware model does not alter batch arithmetic or budget.
+# No NCCL P2P/IB transport overrides are imposed by this profile.
+name: BPP-Video-TIG-C45-SplitPromptFrozen-v2-H100x8
+recipe: bpp-tig-split-clip-frozen-prompt-v2
+required_environment: [TIG_SOURCE_ROOT, IG_HUMAN_ROOT, IG_SIM_ROOT]
+tig_source_root: ${TIG_SOURCE_ROOT}
+tig_reference_revision: 3193957e3b0187d086e44d79e0e4af9845fbd4fd
+model_config_file: infrastructure/bpp_tig/configs/model.yaml
+budget:
+  reference_frame_anchors: 3039478
+  reference_passes: 10
+  window_draws: 30394880
+  sampling: task_level_balanced_with_replacement
+data:
+  human_root: ${IG_HUMAN_ROOT}
+  sim_root: ${IG_SIM_ROOT}
+  human_config: ${TIG_SOURCE_ROOT}/examples/baselines/lerobot_dataset/config/exp_configs/human_train_config_45.json
+  sim_config: ${TIG_SOURCE_ROOT}/examples/baselines/lerobot_dataset/config/exp_configs/sim_train_config_45.json
+  mapping_file: ${TIG_SOURCE_ROOT}/examples/baselines/lerobot_dataset/task_mapping.json
+  obs_horizon: 2
+  pred_horizon: 16
+  prompt_frames: 10
+  image_size: 224
+  cache_size: 64
+  task_filter: []
+  episodes: null
+  training: true
+training:
+  seed: 0
+  pretrained: true
+  max_updates: 118730
+  scheduler_updates: 118730
+  warmup_updates: 5937  # 5936.5 rounds half up; Python's bankers rounding is not used.
+  global_batch: 256
+  microbatch: 32
+  num_workers: 4
+  lr: 0.00005
+  weight_decay: 0.000001
+  betas: [0.95, 0.999]
+  clip_grad_norm: 0.3
+  checkpoint_every: 1000
+  log_every: 10
+  probe_every: 1000
+  milestones: [11873, 23746, 47492, 83111, 118730]
+  fixed_batch: false
+  development: false

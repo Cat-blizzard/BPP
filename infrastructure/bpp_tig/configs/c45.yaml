@@ -1,0 +1,46 @@
+name: BPP-Video-TIG-C45-SplitPromptFrozen-v2
+recipe: bpp-tig-split-clip-frozen-prompt-v2
+required_environment: [TIG_SOURCE_ROOT, IG_HUMAN_ROOT, IG_SIM_ROOT]
+tig_source_root: ${TIG_SOURCE_ROOT}
+tig_reference_revision: 3193957e3b0187d086e44d79e0e4af9845fbd4fd
+model_config_file: infrastructure/bpp_tig/configs/model.yaml
+# Approximately 10 * N frame-anchor draws, rounded upward to full updates.
+# Sampling remains task-level balanced with replacement, NOT ten epochs.
+budget:
+  reference_frame_anchors: 3039478
+  reference_passes: 10
+  window_draws: 30394880
+  sampling: task_level_balanced_with_replacement
+data:
+  human_root: ${IG_HUMAN_ROOT}
+  sim_root: ${IG_SIM_ROOT}
+  human_config: ${TIG_SOURCE_ROOT}/examples/baselines/lerobot_dataset/config/exp_configs/human_train_config_45.json
+  sim_config: ${TIG_SOURCE_ROOT}/examples/baselines/lerobot_dataset/config/exp_configs/sim_train_config_45.json
+  mapping_file: ${TIG_SOURCE_ROOT}/examples/baselines/lerobot_dataset/task_mapping.json
+  obs_horizon: 2
+  pred_horizon: 16
+  prompt_frames: 10
+  image_size: 224
+  cache_size: 64
+  task_filter: []
+  episodes: null
+  training: true
+training:
+  seed: 0
+  pretrained: true
+  max_updates: 237460
+  scheduler_updates: 237460
+  warmup_updates: 11873  # 5%, rounded half up to the nearest update.
+  global_batch: 128
+  microbatch: 32
+  num_workers: 4
+  lr: 0.00005
+  weight_decay: 0.000001
+  betas: [0.95, 0.999]
+  clip_grad_norm: 0.3
+  checkpoint_every: 1000
+  log_every: 10
+  probe_every: 1000
+  milestones: [23746, 47492, 94984, 166222, 237460]
+  fixed_batch: false
+  development: false
