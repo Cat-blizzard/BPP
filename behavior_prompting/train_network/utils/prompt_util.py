@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 import numpy as np
 import torch
 from torch.utils.data._utils.collate import default_collate
@@ -232,7 +232,9 @@ def collate_prompts(batch, pad_value=0):
 
     return collated_batch
 
-def normalize_obs_with_optional_prompt(obs_dict: dict, normalizer: Normalizer):
+def normalize_obs_with_optional_prompt(
+    obs_dict: dict[str, Any], normalizer: Normalizer
+) -> dict[str, Any]:
     """
     Normalizes an observation. The observation may optionally include a 'prompt' key which will be normalized along with the rest of the observation. This method handles the fact that observations can show up both within and outside of the prompt, but that in both cases the same normalization should be applied. Also if a prompt is provided, the actions will also be normalized in addition to the observations.
     """
@@ -256,8 +258,42 @@ def normalize_obs_with_optional_prompt(obs_dict: dict, normalizer: Normalizer):
         prompt_normalizer = normalizer.get_prompt_normalizer()
         nobs['prompt'] = {
             'obs': prompt_normalizer.normalize(prompt['obs']),
-            'action': prompt_normalizer['action'].normalize(prompt['action']),
             'metadata': prompt['metadata']
         }
+        # Video-only prompts contain observations, while sensorimotor prompts
+        # additionally contain actions. Missing actions must remain absent.
+        if 'action' in prompt:
+            nobs['prompt']['action'] = prompt_normalizer['action'].normalize(prompt['action'])
 
     return nobs
+
+
+if __name__ == '__main__':
+    from behavior_prompting.train_network.model.common.normalizer import (
+        LinearNormalizer, SingleFieldLinearNormalizer,
+    )
+
+    normalizer = Normalizer()
+    prompt_normalizer = LinearNormalizer()
+    for key in ['rgb', 'qpos', 'action']:
+        normalizer[key] = SingleFieldLinearNormalizer.create_identity()
+        prompt_normalizer[key] = SingleFieldLinearNormalizer.create_identity()
+    normalizer.set_prompt_normalizer(prompt_normalizer)
+    normalizer.requires_grad_(False)
+    rgb = torch.zeros(2, 3, 3, 4, 4)
+    mask = torch.tensor([[False, False, True], [False, True, True]])
+    video_prompt = {'obs': {'rgb': rgb}, 'metadata': {'mask': mask}}
+    normalized = normalize_obs_with_optional_prompt(
+        {'qpos': torch.zeros(2, 2, 18), 'prompt': video_prompt}, normalizer,
+    )
+    assert 'action' not in normalized['prompt']
+    assert 'action' not in video_prompt
+    assert torch.equal(normalized['prompt']['obs']['rgb'], rgb)
+    assert torch.equal(normalized['prompt']['metadata']['mask'], mask)
+    sensorimotor_prompt = dict(video_prompt, action=torch.zeros(2, 3, 1, 16))
+    normalized = normalize_obs_with_optional_prompt(
+        {'prompt': sensorimotor_prompt}, normalizer,
+    )
+    assert normalized['prompt']['action'].shape == (2, 3, 1, 16)
+    assert torch.equal(normalized['prompt']['action'], sensorimotor_prompt['action'])
+    print('prompt normalization self-test passed: video-only and sensorimotor prompts')
