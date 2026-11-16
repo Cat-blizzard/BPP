@@ -1,5 +1,7 @@
 # Integration package versions used for CPU verification.
 # Install a compatible PyTorch/TorchVision build and TIG separately; see README_TIG_CN.md.
+# Register TIG with --no-deps after preparing its runtime dependencies: its
+# all-baseline pyproject pins different timm/diffusers versions.
 timm==1.0.20
 diffusers==0.35.1
 transformers==4.52.4

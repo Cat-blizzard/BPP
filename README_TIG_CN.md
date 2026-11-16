@@ -27,7 +27,7 @@ prompt 编码器也为交互注意力编码当前机器人图像；这一条 que
 
 - BPP 上游基线：`58125e682acceefef3d60c071212dc483a4db1c9`。
 - TIG 公开代码参考：`3193957e3b0187d086e44d79e0e4af9845fbd4fd`。
-- CPU 验证环境使用 Python 3.12、PyTorch 2.7.1+cu128、TorchVision 0.22.1+cu128。`requirements-tig.txt` 记录适配相关包版本；它不是整个仿真系统的完整环境锁文件，也没有宣称在空机器上重建环境已验证。
+- CPU 验证环境使用 Python 3.12、PyTorch 2.7.1+cu128、TorchVision 0.22.1+cu128。该环境还访问了既有TIG环境中的共享依赖；`requirements-tig.txt` 记录适配相关包版本，不是整个仿真系统的完整环境锁文件，也没有宣称在空机器上重建环境已验证。新服务器应独立安装依赖，不能直接复制含有本机`.pth`引用的虚拟环境。
 
 先按 TIG 官方说明安装其环境、资产和 FFmpeg 共享库。然后在同一隔离 Python 环境中安装本仓库适配依赖；根据机器驱动选择兼容的 PyTorch 构建。下面是已有 CUDA12.8 环境时的示例：
 
@@ -41,8 +41,10 @@ mkdir -p external
 git clone https://github.com/imitator-game/The-Imitator-Game.git external/The-Imitator-Game
 git -C external/The-Imitator-Game checkout 3193957e3b0187d086e44d79e0e4af9845fbd4fd
 export TIG_SOURCE_ROOT="$(realpath external/The-Imitator-Game)"
-python -m pip install -e "$TIG_SOURCE_ROOT"
+python -m pip install -e "$TIG_SOURCE_ROOT" --no-deps
 ```
+
+这里的`--no-deps`仅注册TIG源码，前提是已经按TIG说明准备所需运行依赖。固定版本TIG的`pyproject.toml`同时覆盖其他模型，指定`timm==0.9.10`、`diffusers>=0.36.0`，与本适配已验证的`timm==1.0.20`、`diffusers==0.35.1`不同。不要在装好本适配后再次无约束执行TIG的全依赖安装并覆盖这些版本。其他TIG方法应使用各自环境；该说明不代表所有模型能共享同一组依赖。
 
 TIG 资产、IG 数据和通用 CLIP 权重均须另行准备；本仓库不包含它们。CLIP 权重可预先缓存，CPU 自测使用随机初始化且不下载权重。
 
